@@ -43,3 +43,24 @@ class ContactHelper:
         wd.find_element_by_xpath("//input[@value='Delete']").click()
         wd.switch_to_alert().accept()
         self.return_to_home_page()
+
+    def edit_contact(self, number):
+        wd = self.app.wd
+        self.app.open_home_page()
+        wd.find_element_by_xpath(f"//table[@id='maintable']/tbody/tr[{number+1}]/td[8]/a/img").click()
+
+    def send_keys_to_contact_property(self, prop, new_value):
+        wd = self.app.wd
+        wd.find_element_by_name(prop).click()
+        wd.find_element_by_name(prop).clear()
+        wd.find_element_by_name(prop).send_keys(new_value)
+
+    def update_contact(self):
+        self.app.wd.find_element_by_name("update").click()
+
+    def modify_contact_properties(self, number, props):
+        wd = self.app.wd
+        self.edit_contact(number)
+        for prop, new_value in props.items():
+            self.send_keys_to_contact_property(prop, new_value)
+        self.update_contact()

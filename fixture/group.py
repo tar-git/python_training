@@ -40,3 +40,25 @@ class GroupHelper:
     def return_to_groups_page(self):
         wd = self.app.wd
         wd.find_element_by_link_text("group page").click()
+
+    def modify_group_properties(self, number, props):
+        self.edit_group(number)
+        for prop, new_value in props.items():
+            self.send_keys_to_group_property(prop, new_value)
+        self.update_group()
+        self.return_to_groups_page()
+
+    def edit_group(self, number):
+        wd = self.app.wd
+        self.open_groups_page()
+        wd.find_element_by_xpath(f"//div[@id='content']/form/span[{number}]/input").click()
+        wd.find_element_by_name("edit").click()
+
+    def send_keys_to_group_property(self, prop, new_value):
+        wd = self.app.wd
+        wd.find_element_by_name(prop).click()
+        wd.find_element_by_name(prop).clear()
+        wd.find_element_by_name(prop).send_keys(new_value)
+
+    def update_group(self):
+        self.app.wd.find_element_by_name("update").click()

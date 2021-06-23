@@ -13,59 +13,45 @@ class GroupHelper:
         self.open_groups_page()
         # init group creation
         wd.find_element_by_name("new").click()
-        # fill group form
-        wd.find_element_by_name("group_name").click()
-        wd.find_element_by_name("group_name").clear()
-        wd.find_element_by_name("group_name").send_keys(group.name)
-        wd.find_element_by_name("group_name").click()
-        wd.find_element_by_name("group_header").click()
-        wd.find_element_by_name("group_header").clear()
-        wd.find_element_by_name("group_header").send_keys(group.header)
-        wd.find_element_by_name("group_footer").click()
-        wd.find_element_by_name("group_footer").clear()
-        wd.find_element_by_name("group_footer").send_keys(group.footer)
+        self.fill_group_form(group)
         # submit group creation
         wd.find_element_by_name("submit").click()
         self.return_to_groups_page()
 
-    def delete_first_group(self):
+    def fill_group_form(self, group):
+        self.change_field_value("group_name", group.name)
+        self.change_field_value("group_header", group.header)
+        self.change_field_value("group_footer", group.footer)
+
+    def change_field_value(self, field_name, text):
         wd = self.app.wd
-        self.open_groups_page()
-        # select the first group
-        wd.find_element_by_name("selected[]").click()
-        # submit deletion
-        wd.find_element_by_name("delete").click()
-        self.return_to_groups_page()
+        if text is not None:
+            wd.find_element_by_name(field_name).click()
+            wd.find_element_by_name(field_name).clear()
+            wd.find_element_by_name(field_name).send_keys(text)
+
+    def select_first_group(self):
+        self.app.wd.find_element_by_name("selected[]").click()
 
     def return_to_groups_page(self):
         wd = self.app.wd
         wd.find_element_by_link_text("group page").click()
 
-    def modify(self, number, group):
-        self.modify_group_properties(number, {
-            "group_name"   : group.name,
-            "group_header" : group.header,
-            "group_footer" : group.footer
-        })
-
-    def modify_group_properties(self, number, props):
-        self.edit_group(number)
-        for prop, new_value in props.items():
-            self.send_keys_to_group_property(prop, new_value)
-        self.update_group()
-        self.return_to_groups_page()
-
-    def edit_group(self, number):
+    def delete_first_group(self):
         wd = self.app.wd
         self.open_groups_page()
-        wd.find_element_by_xpath(f"//div[@id='content']/form/span[{number}]/input").click()
-        wd.find_element_by_name("edit").click()
+        self.select_first_group()
+        # submit deletion
+        wd.find_element_by_name("delete").click()
+        self.return_to_groups_page()
 
-    def send_keys_to_group_property(self, prop, new_value):
+    def modify_first_group(self, new_group_data):
         wd = self.app.wd
-        wd.find_element_by_name(prop).click()
-        wd.find_element_by_name(prop).clear()
-        wd.find_element_by_name(prop).send_keys(new_value)
-
-    def update_group(self):
-        self.app.wd.find_element_by_name("update").click()
+        self.open_groups_page()
+        self.select_first_group()
+        # open modification form
+        wd.find_element_by_name("edit").click()
+        self.fill_group_form(new_group_data)
+        # submit modification
+        wd.find_element_by_name("update").click()
+        self.return_to_groups_page()

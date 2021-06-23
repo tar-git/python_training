@@ -2,14 +2,8 @@
 from model.contact import Contact
 
 
-def test_modify_contact(app):
-    app.session.login(username="admin", password="secret")
-    app.contact.modify(1, Contact(
-        'modified_firstname', 
-        'modified_lastname', 
-        'modified_address', 
-        'modified_home', 
-        'modified_mobile', 
-        'modified_email'
-    ))
-    app.session.logout()
+def test_modify_contact_firstname(app):
+    app.contact.modify_first_contact(Contact(firstname="New firstname"))
+
+def test_modify_contact_lastname(app):
+    app.contact.modify_first_contact(Contact(firstname="New lastname"))

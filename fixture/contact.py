@@ -59,8 +59,17 @@ class ContactHelper:
         self.app.wd.find_element_by_name("update").click()
 
     def modify_contact_properties(self, number, props):
-        wd = self.app.wd
         self.edit_contact(number)
         for prop, new_value in props.items():
             self.send_keys_to_contact_property(prop, new_value)
         self.update_contact()
+
+    def modify_contact(self, number, contact):
+        self.modify_contact_properties(number, {
+            "firstname"    : contact.firstname,
+            "lastname"     : contact.lastname,
+            "address"      : contact.address,
+            "home_phone"   : contact.home_phone,
+            "mobile_phone" : contact.mobile_phone,
+            "email"        : contact.email
+        })

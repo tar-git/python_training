@@ -41,6 +41,13 @@ class GroupHelper:
         wd = self.app.wd
         wd.find_element_by_link_text("group page").click()
 
+    def modify_group(self, number, group):
+        self.modify_group_properties(number, {
+            "name"   : group.name,
+            "header" : group.header,
+            "footer" : group.footer
+        })
+
     def modify_group_properties(self, number, props):
         self.edit_group(number)
         for prop, new_value in props.items():

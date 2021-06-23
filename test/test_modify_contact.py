@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
-def test_modify_contact_firstname(app):
-    app.session.login(username="admin", password="secret")
-    app.contact.modify_contact_properties(1, {'firstname': 'modified_firstname'})
-    app.session.logout()
+from model.contact import Contact
 
 
 def test_modify_contact(app):
     app.session.login(username="admin", password="secret")
-    app.contact.modify_contact_properties(2, {
-        'firstname': 'updated_firstname',
-        'lastname' : 'updated_lastname',
-        'address'  : 'updated_address',
-        'home'     : 'updated_home',
-        'mobile'   : 'updated_mobile',
-        'email'    : 'updated_email'
-    })
+    app.contact.modify(1, Contact(
+        'modified_firstname', 
+        'modified_lastname', 
+        'modified_address', 
+        'modified_home', 
+        'modified_mobile', 
+        'modified_email'
+    ))
     app.session.logout()

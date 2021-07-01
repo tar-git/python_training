@@ -1,3 +1,6 @@
+from selenium.webdriver.common.by import By
+from fixture.common import wait_for
+
 
 class SessionHelper:
 
@@ -7,6 +10,7 @@ class SessionHelper:
     def login(self, username, password):
         wd = self.app.wd
         self.app.open_home_page()
+        wait_for(wd, By.NAME, "user")
         wd.find_element_by_name("user").click()
         wd.find_element_by_name("user").clear()
         wd.find_element_by_name("user").send_keys(username)
@@ -17,7 +21,7 @@ class SessionHelper:
     def logout(self):
         wd = self.app.wd
         wd.find_element_by_link_text("Logout").click()
-        wd.find_element_by_name("user")
+        wait_for(wd, By.NAME, "user")
 
     def is_logged_in(self):
         wd = self.app.wd

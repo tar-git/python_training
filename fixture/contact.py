@@ -1,5 +1,8 @@
-from model.contact import Contact
 import re
+from selenium.webdriver.common.by import By
+from fixture.common import wait_for
+from model.contact import Contact
+from time import sleep
 
 
 class ContactHelper:
@@ -10,20 +13,27 @@ class ContactHelper:
     def create(self, contact):
         wd = self.app.wd
         # init contact creation
-        wd.find_element_by_link_text("add new").click()
+        wait_for(wd, By.LINK_TEXT, "add new").click()
         self.fill_contact_form(contact)
         # submit contact creation
-        wd.find_element_by_xpath("//div[@id='content']/form/input[21]").click()
+        # $$('input[name="update"][value="Update"]')
+        wd.find_elements_by_css_selector('input[name="submit"][type="submit"]')[0].click()
+        sleep(0.5)
         self.return_to_home_page()
         self.contact_cache = None
 
     def fill_contact_form(self, contact):
+        wait_for(self.app.wd, By.NAME, "firstname")
         self.change_field_value("firstname", contact.firstname)
         self.change_field_value("lastname", contact.lastname)
         self.change_field_value("address", contact.address)
+        self.change_field_value("email", contact.email)
+        self.change_field_value("email2", contact.email2)
+        self.change_field_value("email3", contact.email3)
         self.change_field_value("home", contact.home_phone)
         self.change_field_value("mobile", contact.mobile_phone)
-        self.change_field_value("email", contact.email)
+        self.change_field_value("work", contact.work_phone)
+        self.change_field_value("phone2", contact.secondary_phone)
 
     def change_field_value(self, field_name, text):
         wd = self.app.wd
@@ -34,13 +44,14 @@ class ContactHelper:
 
     def select_contact_by_index(self, index):
         wd = self.app.wd
+        wait_for(wd, By.NAME, "selected[]")
         wd.find_elements_by_name("selected[]")[index].click()
 
     def return_to_home_page(self):
         wd = self.app.wd
         if not (wd.current_url == ("http://localhost/addressbook/index.php")
            and len(wd.find_elements_by_link_text("Last name")) > 0):
-            wd.find_element_by_link_text("home").click()
+            wait_for(wd, By.LINK_TEXT, "home").click()
 
     def delete_first_contact(self):
         self.delete_contact_by_index(0)
@@ -71,6 +82,7 @@ class ContactHelper:
     def count(self):
         wd = self.app.wd
         self.app.open_home_page()
+        wait_for(wd, By.NAME, "selected[]")
         return len(wd.find_elements_by_name("selected[]"))
 
     contact_cache = None
@@ -80,6 +92,7 @@ class ContactHelper:
             wd = self.app.wd
             self.app.open_home_page()
             self.contact_cache = []
+            wait_for(wd, By.CSS_SELECTOR, "tr[name=entry]")
             for element in wd.find_elements_by_css_selector("tr[name=entry]"):
                 cid = element.find_element_by_name("selected[]").get_attribute("value")
                 fields = element.find_elements_by_css_selector('td')
@@ -89,7 +102,7 @@ class ContactHelper:
                 all_emails = fields[4].text
                 all_phones = fields[5].text
                 self.contact_cache.append(Contact(firstname=firstname, lastname=lastname, address=address, all_phones_from_home_page=all_phones,
-                                                  all_emails_from_home_page=all_emails, id=cid))
+                                                  all_emails_from_home_page=all_emails, cid=cid))
         return list(self.contact_cache)
 
     def open_contact_view_by_index(self, index):
@@ -100,6 +113,7 @@ class ContactHelper:
     def open_contact_to_edit_by_index(self, index):
         wd = self.app.wd
         self.app.open_home_page()
+        wait_for(wd, By.XPATH, '//img[@title="Edit"]')
         wd.find_elements_by_xpath('//img[@title="Edit"]')[index].click()
 
     def get_contact_info_from_edit_page(self, index):
@@ -119,7 +133,7 @@ class ContactHelper:
         return Contact(firstname=firstname, lastname=lastname, address=address,
                        email=email, email2=email2, email3=email3,
                        home_phone=home_phone, mobile_phone=mobile_phone, work_phone=work_phone,
-                       secondary_phone=secondary_phone, id=cid)
+                       secondary_phone=secondary_phone, cid=cid)
 
     def get_contact_from_view_page(self, index):
         wd = self.app.wd

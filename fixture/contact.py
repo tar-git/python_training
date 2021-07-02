@@ -16,9 +16,7 @@ class ContactHelper:
         wait_for(wd, By.LINK_TEXT, "add new").click()
         self.fill_contact_form(contact)
         # submit contact creation
-        # $$('input[name="update"][value="Update"]')
         wd.find_elements_by_css_selector('input[name="submit"][type="submit"]')[0].click()
-        sleep(0.5)
         self.return_to_home_page()
         self.contact_cache = None
 
@@ -52,6 +50,7 @@ class ContactHelper:
         if not (wd.current_url == ("http://localhost/addressbook/index.php")
            and len(wd.find_elements_by_link_text("Last name")) > 0):
             wait_for(wd, By.LINK_TEXT, "home").click()
+            wd.get(wd.current_url)
 
     def delete_first_contact(self):
         self.delete_contact_by_index(0)

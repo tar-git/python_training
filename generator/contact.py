@@ -21,6 +21,10 @@ for o, a in opts:
     elif o == "-f":
         f = a
 
+
+def clear_contact_name(name):
+    return name.strip()
+
 test_data = [ Contact(
         firstname= "", lastname= "",
         address= "", email= "", email2= "",
@@ -28,8 +32,8 @@ test_data = [ Contact(
         work_phone= "", secondary_phone= ""
 )] + [
     Contact(
-        firstname=random_string("firstname_", 10),
-        lastname=random_string("lastname_", 10),
+        firstname=clear_contact_name(random_string("firstname_", 10)),
+        lastname=clear_contact_name(random_string("lastname_", 10)),
         address=random_string("address_", 10),
         email=random_string("email_", 10),
         email2=random_string("email2_", 10),

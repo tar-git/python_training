@@ -1,3 +1,5 @@
+from fixture.common import wait_for
+from selenium.webdriver.common.by import By
 from model.group import Group
 
 
@@ -9,7 +11,7 @@ class GroupHelper:
     def open_groups_page(self):
         wd = self.app.wd
         if not (wd.current_url.endswith('/group.php') and len(wd.find_elements_by_name("new")) > 0):
-            wd.find_element_by_link_text("groups").click()
+            wait_for(wd, By.LINK_TEXT, "groups").click()
 
     def create(self, group):
         wd = self.app.wd
@@ -19,6 +21,7 @@ class GroupHelper:
         self.fill_group_form(group)
         # submit group creation
         wd.find_element_by_name("submit").click()
+        wait_for(wd, By.CSS_SELECTOR, 'div[class="msgbox"]')
         self.return_to_groups_page()
         self.group_cache = None
 
@@ -41,7 +44,7 @@ class GroupHelper:
     def return_to_groups_page(self):
         wd = self.app.wd
         if not (wd.current_url.endswith('/group.php') and len(wd.find_elements_by_name("new")) > 0):
-            wd.find_element_by_link_text("group page").click()
+            wait_for(wd, By.LINK_TEXT, "group page").click()
 
     def delete_first_group(self):
         self.delete_group_by_index(0)
@@ -73,6 +76,7 @@ class GroupHelper:
     def count(self):
         wd = self.app.wd
         self.open_groups_page()
+        wd.get(wd.current_url)
         return len(wd.find_elements_by_name("selected[]"))
 
     group_cache = None

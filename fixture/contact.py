@@ -16,7 +16,8 @@ class ContactHelper:
         wait_for(wd, By.LINK_TEXT, "add new").click()
         self.fill_contact_form(contact)
         # submit contact creation
-        wd.find_elements_by_css_selector('input[name="submit"][type="submit"]')[0].click()
+        wd.find_element_by_css_selector('input[name="submit"][type="submit"][value="Enter"]').click()
+        wait_for(wd, By.CSS_SELECTOR, 'div[class="msgbox"]')
         self.return_to_home_page()
         self.contact_cache = None
 
@@ -47,10 +48,9 @@ class ContactHelper:
 
     def return_to_home_page(self):
         wd = self.app.wd
-        if not (wd.current_url == ("http://localhost/addressbook/index.php")
+        if not (wd.current_url == self.app.base_url
            and len(wd.find_elements_by_link_text("Last name")) > 0):
             wait_for(wd, By.LINK_TEXT, "home").click()
-            wd.get(wd.current_url)
 
     def delete_first_contact(self):
         self.delete_contact_by_index(0)
@@ -81,7 +81,7 @@ class ContactHelper:
     def count(self):
         wd = self.app.wd
         self.app.open_home_page()
-        wait_for(wd, By.NAME, "selected[]")
+        wd.get(wd.current_url)
         return len(wd.find_elements_by_name("selected[]"))
 
     contact_cache = None

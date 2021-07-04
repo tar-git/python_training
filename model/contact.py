@@ -31,7 +31,7 @@ class Contact:
         return self.id < other.id
 
     def id_or_max(self):
-        if self.id is not None and type(self.id) == str:
+        if self.id is not None:
             return int(self.id)
         else:
             return maxsize

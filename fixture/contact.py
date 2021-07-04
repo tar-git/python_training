@@ -46,6 +46,11 @@ class ContactHelper:
         wait_for(wd, By.NAME, "selected[]")
         wd.find_elements_by_name("selected[]")[index].click()
 
+    def select_contact_by_id(self, cid):
+        wd = self.app.wd
+        wait_for(wd, By.NAME, "selected[]")
+        wd.find_element_by_css_selector("input[value='%s']" % cid).click()
+
     def return_to_home_page(self):
         wd = self.app.wd
         if not (wd.current_url == self.app.base_url
@@ -65,6 +70,16 @@ class ContactHelper:
         self.return_to_home_page()
         self.contact_cache = None
 
+    def delete_contact_by_id(self, cid):
+        wd = self.app.wd
+        self.app.open_home_page()
+        self.select_contact_by_id(cid)
+        # submit deletion
+        wd.find_element_by_xpath("//input[@value='Delete']").click()
+        wd.switch_to_alert().accept()
+        self.return_to_home_page()
+        self.contact_cache = None
+
     def modify_first_contact(self, new_contact_data):
         self.modify_contact_by_index(0, new_contact_data)
 
@@ -72,6 +87,16 @@ class ContactHelper:
         wd = self.app.wd
         # open modification form
         self.open_contact_to_edit_by_index(index)
+        self.fill_contact_form(new_contact_data)
+        # submit modification
+        wd.find_element_by_name("update").click()
+        self.return_to_home_page()
+        self.contact_cache = None
+
+    def modify_contact_by_id(self, cid, new_contact_data):
+        wd = self.app.wd
+        # open modification form
+        self.open_contact_to_edit_by_id(cid)
         self.fill_contact_form(new_contact_data)
         # submit modification
         wd.find_element_by_name("update").click()
@@ -114,6 +139,14 @@ class ContactHelper:
         self.app.open_home_page()
         wait_for(wd, By.XPATH, '//img[@title="Edit"]')
         wd.find_elements_by_xpath('//img[@title="Edit"]')[index].click()
+
+    def open_contact_to_edit_by_id(self, cid):
+        wd = self.app.wd
+        self.app.open_home_page()
+        wait_for(wd, By.CSS_SELECTOR, 'tr[name="entry"]')
+        # row = wd.find_element_by_css_selector('tr[name="entry"] input[value="%s"]' % cid).parent
+        # row.find_element_by_css_selector('img[title="Edit"]').click()
+        wd.find_element_by_css_selector('a[href="edit.php?id=%s"] img' % cid).click()
 
     def get_contact_info_from_edit_page(self, index):
         wd = self.app.wd

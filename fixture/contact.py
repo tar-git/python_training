@@ -181,3 +181,15 @@ class ContactHelper:
         secondary_phone = m.group(1) if m is not None else ''
         return Contact(home_phone=home_phone, mobile_phone=mobile_phone,
                        work_phone=work_phone, secondary_phone=secondary_phone)
+
+    def add_in_group(self, group, contact):
+        wd = self.app.wd
+        self.select_contact_by_id(contact.id)
+        wd.find_element_by_css_selector('select[name="to_group"] option[value="%s"]' % group.id).click()
+        wd.find_element_by_css_selector('input[value="Add to"]').click()
+
+    def delete_from_group(self, group, contact):
+        wd = self.app.wd
+        wd.find_element_by_css_selector('select[name="group"] option[value="%s"]' % group.id).click()
+        self.select_contact_by_id(contact.id)
+        wd.find_element_by_css_selector('input[type="submit"][name="remove"]').click()

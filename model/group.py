@@ -8,6 +8,9 @@ class Group:
         self.footer = footer
         self.id = id
 
+    def __hash__(self):
+        return hash((self.id, self.name, self.header, self.footer))
+
     def __repr__(self):
         return "%s:%s:%s:%s" % (self.id, self.name, self.header, self.footer)
 

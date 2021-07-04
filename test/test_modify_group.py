@@ -3,15 +3,15 @@ from model.group import Group
 import random
 
 
-def test_modify_group_name(app, db, check_ui):
-    old_groups = db.get_group_list()
+def test_modify_group_name(app, orm, check_ui):
+    old_groups = orm.get_group_list()
     if len(old_groups) == 0:
         app.group.create(Group(name = "test"))
     group = random.choice(old_groups)
     new_group_data = Group(name="New group")
     new_group_data.id = group.id
     app.group.modify_group_by_id(group.id, new_group_data)
-    new_groups = db.get_group_list()
+    new_groups = orm.get_group_list()
     old_groups[old_groups.index(group)] = new_group_data
     assert sorted(old_groups, key=Group.id_or_max) == sorted(new_groups, key=Group.id_or_max)
     if check_ui:

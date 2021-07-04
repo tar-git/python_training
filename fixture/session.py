@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from fixture.common import wait_for
+from selenium.common.exceptions import TimeoutException
 
 
 class SessionHelper:
@@ -25,11 +26,15 @@ class SessionHelper:
 
     def is_logged_in(self):
         wd = self.app.wd
-        return len(wd.find_elements_by_link_text("Logout")) > 0
+        try:
+            wait_for(wd, By.LINK_TEXT, "Logout", timeout=1)
+            return True
+        except TimeoutException:
+            return False
 
     def is_logged_in_as(self, username):
         wd = self.app.wd
-        return self.get_logged_user == username
+        return self.get_logged_user() == username
 
     def get_logged_user(self):
         wd = self.app.wd
